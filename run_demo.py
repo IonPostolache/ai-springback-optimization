@@ -36,18 +36,18 @@ from domain import get_evaluator
 from physics import bend_model as bm
 from search.search_loop import RadiusSearchLog, SearchConfig, bisection_search
 
-# DEFAULT_REQUIREMENT = (
-#     "Find the maximum bend radius that keeps springback under 2mm, "
-#     "accounting for plus or minus 10 percent thickness variation and "
-#     "plus or minus 5 percent yield strength variation. The flange "
-#     "length must not change."
-# )
 DEFAULT_REQUIREMENT = (
-    "Find the maximum bend radius that keeps springback under 3.5mm, "
-    "accounting for plus or minus 20 percent thickness variation and "
-    "plus or minus 10 percent yield strength variation. The flange "
+    "Find the maximum bend radius that keeps springback under 2mm, "
+    "accounting for plus or minus 10 percent thickness variation and "
+    "plus or minus 5 percent yield strength variation. The flange "
     "length must not change."
 )
+# DEFAULT_REQUIREMENT = (
+#     "Find the maximum bend radius that keeps springback under 3.5mm, "
+#     "accounting for plus or minus 20 percent thickness variation and "
+#     "plus or minus 10 percent yield strength variation. The flange "
+#     "length must not change."
+# )
 
 
 def try_parse_intent(requirement_text: str):
@@ -122,9 +122,15 @@ def run_demo(requirement_text: str, output_dir: Path = Path("outputs")):
     r_floor = bm.crack_floor(t_nom=spec.thickness_nominal_mm,
                               t_tol=spec.thickness_tolerance_pct / 100)
     config = SearchConfig(r_lo=r_floor, r_hi=10.0, tolerance_mm=0.05, max_iterations=30)
-    # evaluator = get_evaluator(mode="physics", n_samples=500, seed=42)
+
+    # Use the physics evaluator for the final design decision.
+    # The surrogate is intended as an acceleration strategy: in a real CAE
+    # workflow, expensive simulations would be used to generate a DOE,
+    # train and validate the surrogate, and promising candidates would then
+    # be verified against the high-fidelity solver.
     evaluator = get_evaluator(
         mode="physics",
+        # mode="surrogate",
         n_samples=500,
         seed=42,
         thickness_nominal_mm=spec.thickness_nominal_mm,
@@ -159,7 +165,6 @@ def run_demo(requirement_text: str, output_dir: Path = Path("outputs")):
 
     # 4. Explain the result (LLM back edge, with fallback).
     final_eval_dict = final_eval.as_log_dict(DesignParameters(r_bend=r_final))
-    # explanation = try_explain_result(search_result, final_eval_dict)
     explanation = try_explain_result(
         search_result,
         final_eval_dict,
