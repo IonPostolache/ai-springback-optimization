@@ -70,6 +70,7 @@ results/*.sta
 logs/
 data/
 outputs/
+output/
 __pycache__/
 *.pyc
 .venv/

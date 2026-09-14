@@ -1,0 +1,37 @@
+# Python virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Test/cache
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build/package artifacts
+build/
+dist/
+*.egg-info/
+
+# Generated project outputs
+outputs/
+output/
+cad/
+
+
+# Logs
+logs/
+
+# Local environment/secrets
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE/editor
+.vscode/
+
+# OS files
+.DS_Store

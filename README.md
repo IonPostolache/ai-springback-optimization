@@ -69,6 +69,9 @@ python plots/make_plots.py
 Test the LLM connection:
 python llm/client.py
 
+### 5. Run the complete end-to-end demo
+python run_demo.py
+
 
 
 ## Architecture

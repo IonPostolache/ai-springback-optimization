@@ -70,24 +70,39 @@ class PhysicsEvaluator:
     single call is slow.
     """
 
-    def __init__(self, n_samples: int = 500, seed: int | None = None):
+    def __init__(
+        self,
+        n_samples: int = 500,
+        seed: int | None = None,
+        thickness_nominal_mm: float = bm.T_NOM,
+        springback_limit_mm: float = SPRINGBACK_LIMIT_MM,
+        thickness_tol: float = THICKNESS_TOL,
+        yield_tol: float = YIELD_TOL,
+    ):
         self.n_samples = n_samples
         self.seed = seed
+        self.thickness_nominal_mm = thickness_nominal_mm
+        self.springback_limit_mm = springback_limit_mm
+        self.thickness_tol = thickness_tol
+        self.yield_tol = yield_tol
 
     def evaluate(self, params: DesignParameters) -> EvaluationResult:
         t0 = time.perf_counter()
 
-        r_floor = bm.crack_floor(t_nom=bm.T_NOM, t_tol=THICKNESS_TOL)
+        r_floor = bm.crack_floor(
+            t_nom=self.thickness_nominal_mm,
+            t_tol=self.thickness_tol,
+        )
         crack_ok = params.r_bend >= r_floor
 
         mc = bm.monte_carlo_p99_springback(
             params.r_bend,
             n_samples=self.n_samples,
-            t_tol=THICKNESS_TOL,
-            sy_tol=YIELD_TOL,
+            t_tol=self.thickness_tol,
+            sy_tol=self.yield_tol,
             seed=self.seed,
         )
-        springback_ok = mc["p99"] <= SPRINGBACK_LIMIT_MM
+        springback_ok = mc["p99"] <= self.springback_limit_mm
 
         runtime = time.perf_counter() - t0
 

@@ -36,10 +36,16 @@ from domain import get_evaluator
 from physics import bend_model as bm
 from search.search_loop import RadiusSearchLog, SearchConfig, bisection_search
 
+# DEFAULT_REQUIREMENT = (
+#     "Find the maximum bend radius that keeps springback under 2mm, "
+#     "accounting for plus or minus 10 percent thickness variation and "
+#     "plus or minus 5 percent yield strength variation. The flange "
+#     "length must not change."
+# )
 DEFAULT_REQUIREMENT = (
-    "Find the maximum bend radius that keeps springback under 2mm, "
-    "accounting for plus or minus 10 percent thickness variation and "
-    "plus or minus 5 percent yield strength variation. The flange "
+    "Find the maximum bend radius that keeps springback under 3.5mm, "
+    "accounting for plus or minus 20 percent thickness variation and "
+    "plus or minus 10 percent yield strength variation. The flange "
     "length must not change."
 )
 
@@ -69,8 +75,11 @@ def try_parse_intent(requirement_text: str):
             frozen_features=["flange_length"],
         )
 
-
-def try_explain_result(search_result: dict, final_evaluation: dict) -> str:
+def try_explain_result(
+    search_result: dict,
+    final_evaluation: dict,
+    springback_limit_mm: float,
+    ) -> str:
     """
     Attempts the LLM back edge. Falls back to a templated (non-LLM)
     summary if unreachable -- same honesty-about-fallback pattern as
@@ -89,7 +98,8 @@ def try_explain_result(search_result: dict, final_evaluation: dict) -> str:
         return (
             f"[templated fallback] The maximum feasible bend radius is "
             f"{r:.3f}mm, where worst-case (P99) springback reaches "
-            f"{p99:.3f}mm -- right at the 2.0mm limit. This is the largest "
+            # f"{p99:.3f}mm -- right at the 2.0mm limit. This is the largest "
+            f"{p99:.3f}mm -- right at the {springback_limit_mm:.1f}mm limit."
             f"radius the die can use (easier tooling, less wear, lower "
             f"force) before springback exceeds spec across the expected "
             f"material scatter."
@@ -112,7 +122,16 @@ def run_demo(requirement_text: str, output_dir: Path = Path("outputs")):
     r_floor = bm.crack_floor(t_nom=spec.thickness_nominal_mm,
                               t_tol=spec.thickness_tolerance_pct / 100)
     config = SearchConfig(r_lo=r_floor, r_hi=10.0, tolerance_mm=0.05, max_iterations=30)
-    evaluator = get_evaluator(mode="physics", n_samples=500, seed=42)
+    # evaluator = get_evaluator(mode="physics", n_samples=500, seed=42)
+    evaluator = get_evaluator(
+        mode="physics",
+        n_samples=500,
+        seed=42,
+        thickness_nominal_mm=spec.thickness_nominal_mm,
+        springback_limit_mm=spec.springback_limit_mm,
+        thickness_tol=spec.thickness_tolerance_pct / 100,
+        yield_tol=spec.yield_strength_tolerance_pct / 100,
+    )
 
     log_path = output_dir / "logs" / "demo_run.jsonl"
     log = RadiusSearchLog(log_path)
@@ -140,7 +159,12 @@ def run_demo(requirement_text: str, output_dir: Path = Path("outputs")):
 
     # 4. Explain the result (LLM back edge, with fallback).
     final_eval_dict = final_eval.as_log_dict(DesignParameters(r_bend=r_final))
-    explanation = try_explain_result(search_result, final_eval_dict)
+    # explanation = try_explain_result(search_result, final_eval_dict)
+    explanation = try_explain_result(
+        search_result,
+        final_eval_dict,
+        spec.springback_limit_mm,
+    )
     print()
     print("-" * 70)
     print("EXPLANATION")
