@@ -1,0 +1,79 @@
+# Packaging debris
+dist/
+*.egg-info/
+src/build123d/_version.py
+
+# Testing debris
+__pycache__/
+
+# Coverage debris
+.coverage
+htmlcov/
+
+# Docs debris
+docs/_build/
+
+# User generated debris
+*.swp
+*.log
+
+
+# Test fixtures override the patterns above
+!tests/assets/**
+
+#mypy cache
+.mypy_cache
+.cache/
+build
+build/
+
+
+#Environments
+.env
+.venv
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+#ide debris
+.vscode
+.vscode/
+
+
+# Profiling debris.
+prof/
+
+# MacOS cruft
+.DS_Store
+
+
+*.py[cod]
+.pytest_cache/
+
+*.egg-info/
+
+results/*.step
+results/*.stp
+results/*.msh
+results/*.inp
+results/*.dat
+results/*.frd
+results/*.out
+results/*.12d
+results/*.cvg
+results/*.sta
+
+
+logs/
+data/
+outputs/
+__pycache__/
+*.pyc
+.venv/
+.env
+*.egg-info/
+
+
