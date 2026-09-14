@@ -199,7 +199,28 @@ The surrogate was trained on 200 physics campaigns, using 160 samples for traini
 | 200-radius surrogate prediction | 0.24 ms |
 | 200-radius physics campaigns | ~9.4 s |
 
-The surrogate is used as an acceleration mechanism; final engineering feasibility is determined by the physics evaluator.
+
+### Optimization result
+
+![Springback vs bend radius](plots/output/springback_vs_radius.png)
+
+The plot shows the relationship between bend radius and predicted P99 springback,
+with the feasible region bounded by the springback constraint.
+
+### Physics model vs surrogate
+
+![Physics vs surrogate](plots/output/physics_vs_surrogate.png)
+
+The surrogate closely reproduces the physics evaluator over the sampled radius range,
+with a held-out R² of 0.99953 and MAPE of 0.4442%.
+
+### Evaluation speed
+
+![Physics vs surrogate timing](plots/output/timing_comparison.png)
+
+The surrogate provides a substantial reduction in evaluation time, making it suitable
+for accelerating candidate exploration before verification with the physics evaluator.
+
 
 ---
 
