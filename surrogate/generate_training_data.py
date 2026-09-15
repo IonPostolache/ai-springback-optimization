@@ -3,11 +3,10 @@ Generate surrogate training data: run the (expensive, campaign-level)
 PhysicsEvaluator across a range of bend radii, save (r -> P99 springback)
 pairs to disk.
 
-This is the data the day-6/week-2 surrogate is trained on. Deliberately
+This is the data the surrogate is trained on. Deliberately
 NOT trained on individual (r, t, sigma_y) samples -- see project notes:
 the surrogate should replace the whole Monte Carlo campaign per radius,
-not just the per-sample physics call, since that's what actually mirrors
-Neural Concept's value proposition (fast prediction replaces an expensive
+not just the per-sample physics call (fast prediction replaces an expensive
 simulation campaign, not a single physics evaluation).
 
 Note on n_mc_samples=50_000: this closed-form formula is fast enough
@@ -47,7 +46,7 @@ def generate_training_data(
     and write the results to a CSV: r_bend, p99_springback_mm,
     max_springback_mm, feasible, campaign_runtime_s.
 
-    campaign_runtime_s is logged explicitly so the day-6/7 "physics
+    campaign_runtime_s is logged explicitly so the "physics
     campaign vs. surrogate" timing comparison uses real measured numbers,
     not invented ones -- consistent with the project's honesty-about-
     runtime framing throughout.

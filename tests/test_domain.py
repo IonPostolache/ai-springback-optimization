@@ -43,7 +43,7 @@ class TestPhysicsEvaluator:
 class TestSurrogateEvaluatorContract:
     def test_untrained_surrogate_raises_loudly(self):
         """The surrogate must fail loudly, not silently return garbage,
-        before it's actually trained (week-2 item)."""
+        before it's actually trained."""
         evaluator = SurrogateEvaluator(model=None)
         with pytest.raises(NotImplementedError):
             evaluator.evaluate(DesignParameters(r_bend=5.0))

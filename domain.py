@@ -5,8 +5,8 @@ project.
 This is the one interface the rest of the pipeline depends on:
     DesignParameters -> Evaluator.evaluate() -> EvaluationResult
 
-Week 1 implements PhysicsEvaluator (Monte Carlo campaign over the textbook
-springback formula in bend_model.py). Week 2 adds SurrogateEvaluator behind
+First is PhysicsEvaluator implemented (Monte Carlo campaign over the textbook
+springback formula in bend_model.py). Then SurrogateEvaluator is added behind
 the SAME interface, so the search loop, logging, and plotting code never
 change -- only which evaluator is passed in.
 """
@@ -120,12 +120,11 @@ class PhysicsEvaluator:
 
 class SurrogateEvaluator:
     """
-    Week-2 stub. Will be trained on (r -> P99 springback) pairs generated
+    Will be trained on (r -> P99 springback) pairs generated
     by running PhysicsEvaluator across a range of radii, then swapped in
     here behind the same interface. Until trained, raises -- this is
     intentional so the pipeline fails loudly rather than silently
-    returning nonsense if mode="surrogate" is selected before day 8-9 work
-    is done.
+    returning nonsense if mode="surrogate" is selected too soon.
     """
 
     def __init__(self, model=None):
@@ -134,8 +133,8 @@ class SurrogateEvaluator:
     def evaluate(self, params: DesignParameters) -> EvaluationResult:
         if self.model is None:
             raise NotImplementedError(
-                "SurrogateEvaluator has no trained model yet (week-2 item). "
-                "Use PhysicsEvaluator for week-1 development."
+                "SurrogateEvaluator has no trained model yet. "
+                "Use PhysicsEvaluator for initial development."
             )
         t0 = time.perf_counter()
         p99_pred = float(self.model.predict(np.array([[params.r_bend]]))[0])

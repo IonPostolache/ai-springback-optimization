@@ -98,11 +98,10 @@ def try_explain_result(
         return (
             f"[templated fallback] The maximum feasible bend radius is "
             f"{r:.3f}mm, where worst-case (P99) springback reaches "
-            # f"{p99:.3f}mm -- right at the 2.0mm limit. This is the largest "
-            f"{p99:.3f}mm -- right at the {springback_limit_mm:.1f}mm limit."
-            f"radius the die can use (easier tooling, less wear, lower "
-            f"force) before springback exceeds spec across the expected "
-            f"material scatter."
+            f"{p99:.3f}mm -- right at the {springback_limit_mm:.1f}mm limit. "
+            f"This is the largest radius the die can use (easier tooling, "
+            f"less wear, lower force) before springback exceeds spec "
+            f"across the expected material scatter."
         )
 
 

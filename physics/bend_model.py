@@ -97,7 +97,7 @@ def monte_carlo_p99_springback(r_bend, n_samples=500, t_nom=T_NOM, t_tol=0.10,
     Monte Carlo campaign at a fixed radius: sample thickness and yield
     strength uniformly within tolerance, return P99 and max springback.
     This is the "expensive" per-candidate evaluation the search loop calls,
-    and what the day-6 surrogate is trained to replace.
+    and what the surrogate is trained to replace.
     """
     rng = np.random.default_rng(seed)
     t_samples = rng.uniform(t_nom * (1 - t_tol), t_nom * (1 + t_tol), n_samples)
